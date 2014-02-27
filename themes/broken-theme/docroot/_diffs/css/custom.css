@@ -1,3 +1,4 @@
+@import "compass";
 @import "mixins";
 
 @import url(custom_common.css);
@@ -314,10 +315,6 @@ $dockbarOpenGradientStart: #0EA6F9;
 				&.active > a {
 					background-color: $dockbarGradientStart;
 				}
-			}
-
-			* {
-				display: none;
 			}
 
 			> li > a {
