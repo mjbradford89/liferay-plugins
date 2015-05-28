@@ -1282,23 +1282,23 @@ Please find a solution that does not require portal-impl.jar.
 				</then>
 			</if>
 
-			<pathconvert property="frontend.css.jar">
+			<pathconvert property="frontend.themes.jar">
 				<path>
-					<fileset dir="${module.framework.base.dir}/portal" includes="com.liferay.frontend.css.web*jar" />
+					<fileset dir="${module.framework.base.dir}/portal" includes="com.liferay.frontend.themes.web*jar" />
 				</path>
 			</pathconvert>
 
-			<condition property="frontend.css.jar.exists">
+			<condition property="frontend.themes.jar.exists">
 				<resourcecount when="eq" count="1">
-					<fileset dir="${module.framework.base.dir}/portal" includes="com.liferay.frontend.css.web*jar" />
+					<fileset dir="${module.framework.base.dir}/portal" includes="com.liferay.frontend.themes.web*jar" />
 				</resourcecount>
 			</condition>
 
 			<if>
-				<istrue value="${frontend.css.jar.exists}" />
+				<istrue value="${frontend.themes.jar.exists}" />
 				<then>
 					<unzip
-						src="${frontend.css.jar}"
+						src="${frontend.themes.jar}"
 						dest="${app.server.portal.dir}"
 					>
 						<patternset>
@@ -1310,7 +1310,7 @@ Please find a solution that does not require portal-impl.jar.
 					</unzip>
 				</then>
 				<else>
-					<echo>com.liferay.frotnend.css.web.jar does not exist.</echo>
+					<echo>com.liferay.frotnend.themes.web.jar does not exist.</echo>
 				</else>
 			</if>
 
