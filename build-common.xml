@@ -1458,6 +1458,8 @@ Please find a solution that does not require portal-impl.jar.
 					</if>
 				</else>
 			</if>
+
+			<delete dir="${frontend.css.web.dir}" />
 		</sequential>
 	</macrodef>
 
