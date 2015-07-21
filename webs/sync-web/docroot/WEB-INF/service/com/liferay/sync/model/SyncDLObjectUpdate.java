@@ -25,14 +25,20 @@ import java.util.List;
 public class SyncDLObjectUpdate {
 
 	public SyncDLObjectUpdate(
-		List<SyncDLObject> syncDLObjects, long lastAccessTime) {
+		List<SyncDLObject> syncDLObjects, int resultsTotal,
+		long lastAccessTime) {
 
 		_syncDLObjects = syncDLObjects;
+		_resultsTotal = resultsTotal;
 		_lastAccessTime = lastAccessTime;
 	}
 
 	public long getLastAccessTime() {
 		return _lastAccessTime;
+	}
+
+	public int getResultsTotal() {
+		return _resultsTotal;
 	}
 
 	@JSON
@@ -41,6 +47,7 @@ public class SyncDLObjectUpdate {
 	}
 
 	private long _lastAccessTime;
+	private int _resultsTotal;
 	private List<SyncDLObject> _syncDLObjects;
 
 }
