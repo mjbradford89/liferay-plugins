@@ -14,23 +14,37 @@
 
 package com.liferay.amazontools;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.autoscaling.model.DeleteLaunchConfigurationRequest;
 import com.amazonaws.services.autoscaling.model.DescribeLaunchConfigurationsRequest;
 import com.amazonaws.services.autoscaling.model.DescribeLaunchConfigurationsResult;
 import com.amazonaws.services.autoscaling.model.LaunchConfiguration;
 import com.amazonaws.services.autoscaling.model.ResourceInUseException;
 import com.amazonaws.services.ec2.model.DeleteVolumeRequest;
+import com.amazonaws.services.ec2.model.DeregisterImageRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.DescribeVolumesRequest;
 import com.amazonaws.services.ec2.model.DescribeVolumesResult;
 import com.amazonaws.services.ec2.model.Filter;
+import com.amazonaws.services.ec2.model.Image;
+import com.amazonaws.services.ec2.model.Instance;
+import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.Volume;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
+import com.amazonaws.services.identitymanagement.model.User;
 
 import jargs.gnu.CmdLineParser;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Ivica Cardic
+ * @author Mladen Cikara
  */
 public class AMICleaner extends BaseAMITool {
 
@@ -67,6 +81,10 @@ public class AMICleaner extends BaseAMITool {
 		System.out.println("Deleting old Launch Configurations");
 
 		deleteOldLaunchConfigurations();
+
+		System.out.println("Deleting unused AMIs");
+
+		deleteOldImages();
 	}
 
 	protected void deleteAvailableVolumes() {
@@ -94,6 +112,25 @@ public class AMICleaner extends BaseAMITool {
 			deleteVolumeRequest.setVolumeId(volume.getVolumeId());
 
 			amazonEC2Client.deleteVolume(deleteVolumeRequest);
+		}
+	}
+
+	protected void deleteImage(String imageId) {
+		DeregisterImageRequest deregisterImageRequest =
+			new DeregisterImageRequest();
+
+		deregisterImageRequest.setImageId(imageId);
+
+		amazonEC2Client.deregisterImage(deregisterImageRequest);
+	}
+
+	protected void deleteOldImages() {
+		Set<String> imageIds = getImageIds();
+
+		Set<String> unusedImageIds = getUnusedImageIds(getUserId(), imageIds);
+
+		for (String imageId : unusedImageIds) {
+			deleteImage(imageId);
 		}
 	}
 
@@ -126,6 +163,83 @@ public class AMICleaner extends BaseAMITool {
 			catch (ResourceInUseException riue) {
 			}
 		}
+	}
+
+	protected Set<String> getImageIds() {
+		Set<String> imageIds = new HashSet<String>();
+
+		DescribeInstancesResult describeInstancesResult =
+			amazonEC2Client.describeInstances();
+
+		for (Reservation reservation :
+				describeInstancesResult.getReservations()) {
+
+			for (Instance instance : reservation.getInstances()) {
+				imageIds.add(instance.getImageId());
+			}
+		}
+
+		return imageIds;
+	}
+
+	protected Set<String> getUnusedImageIds(
+		String userId, Set<String> imageIds) {
+
+		Set<String> unusedImageIds = new HashSet<String>();
+
+		DescribeImagesRequest describeImagesRequest =
+			new DescribeImagesRequest();
+
+		List<String> owners = new ArrayList<String>();
+
+		owners.add(userId);
+
+		describeImagesRequest.setOwners(owners);
+
+		DescribeImagesResult describeImagesResult =
+			amazonEC2Client.describeImages(describeImagesRequest);
+
+		List<Image> images = describeImagesResult.getImages();
+
+		for (Image image : images) {
+			String imageName = image.getName();
+
+			if ((imageName != null) && imageName.startsWith("osb-lcs-") &&
+				!imageIds.contains(image.getImageId())) {
+
+				unusedImageIds.add(image.getImageId());
+			}
+		}
+
+		return unusedImageIds;
+	}
+
+	protected String getUserId() {
+		String userId = null;
+
+		try {
+			GetUserResult getUserResult =
+				amazonIdentityManagementClient.getUser();
+
+			User user = getUserResult.getUser();
+
+			userId = user.getUserId();
+		}
+		catch (AmazonServiceException e) {
+			String errorCode = e.getErrorCode();
+
+			if (errorCode.compareTo("AccessDenied") == 0) {
+				String message = e.getMessage();
+
+				int x = message.indexOf("::");
+
+				int y = message.indexOf(":", x + 2);
+
+				userId = message.substring(x + 2, y);
+			}
+		}
+
+		return userId;
 	}
 
 }

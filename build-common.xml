@@ -120,10 +120,10 @@
 	</path>
 
 	<path id="classpath.org.apache.maven.maven.ant.tasks">
-		<fileset dir="${sdk.dir}/dependencies/org.apache.maven.maven.ant.tasks/lib" includes="*.jar"/>
+		<fileset dir="${sdk.dir}/dependencies/org.apache.maven.maven.ant.tasks/lib" includes="*.jar" />
 	</path>
 
-	<taskdef classpathref="classpath.org.apache.maven.maven.ant.tasks" resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant"/>
+	<taskdef classpathref="classpath.org.apache.maven.maven.ant.tasks" resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" />
 
 	<path id="classpath.org.codehaus.groovy">
 		<fileset dir="${sdk.dir}/dependencies/org.codehaus.groovy/lib" includes="*.jar" />
@@ -1329,10 +1329,10 @@ Please find a solution that does not require portal-impl.jar.
 								src="${frontend.themes.web.jar.path}"
 							>
 								<patternset>
-									<include name="**/html/themes/**" />
+									<include name="**/META-INF/resources/**" />
 								</patternset>
 								<mapper>
-									<globmapper from="META-INF/resources/html/*" to="html/*" />
+									<globmapper from="META-INF/resources/*" to="*" />
 								</mapper>
 							</unzip>
 
@@ -1352,14 +1352,14 @@ Please find a solution that does not require portal-impl.jar.
 				<then>
 					<copy todir="@{module.dir}/docroot" overwrite="true" preservelastmodified="true">
 						<fileset
-							dir="${frontend.themes.web.dir}/html/themes/_unstyled"
+							dir="${frontend.themes.web.dir}/_unstyled"
 							excludes="templates/**"
 						/>
 					</copy>
 
 					<copy todir="@{module.dir}/docroot/templates" overwrite="true" preservelastmodified="true">
 						<fileset
-							dir="${frontend.themes.web.dir}/html/themes/_unstyled/templates"
+							dir="${frontend.themes.web.dir}/_unstyled/templates"
 							excludes="init.${theme.type}"
 							includes="*.${theme.type}"
 						/>
@@ -1370,14 +1370,14 @@ Please find a solution that does not require portal-impl.jar.
 					<then>
 						<copy todir="@{module.dir}/docroot" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/_unstyled"
+								dir="${frontend.themes.web.dir}/_unstyled"
 								excludes="templates/**"
 							/>
 						</copy>
 
 						<copy todir="@{module.dir}/docroot/templates" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/_unstyled/templates"
+								dir="${frontend.themes.web.dir}/_unstyled/templates"
 								excludes="init.${theme.type}"
 								includes="*.${theme.type}"
 							/>
@@ -1385,7 +1385,7 @@ Please find a solution that does not require portal-impl.jar.
 
 						<copy todir="@{module.dir}/docroot" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/_styled"
+								dir="${frontend.themes.web.dir}/_styled"
 							/>
 						</copy>
 					</then>
@@ -1395,14 +1395,14 @@ Please find a solution that does not require portal-impl.jar.
 					<then>
 						<copy todir="@{module.dir}/docroot" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/classic"
+								dir="${frontend.themes.web.dir}/classic"
 								excludes="**/.sass-cache/**,_diffs/**,templates/**"
 							/>
 						</copy>
 
 						<copy todir="@{module.dir}/docroot/templates" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/classic/templates"
+								dir="${frontend.themes.web.dir}/classic/templates"
 								includes="*.${theme.type}"
 							/>
 						</copy>
@@ -1413,14 +1413,14 @@ Please find a solution that does not require portal-impl.jar.
 					<then>
 						<copy todir="@{module.dir}/docroot" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/control_panel"
+								dir="${frontend.themes.web.dir}/control_panel"
 								excludes="**/.sass-cache/**,_diffs/**,templates/**"
 							/>
 						</copy>
 
 						<copy todir="@{module.dir}/docroot/templates" overwrite="true" preservelastmodified="true">
 							<fileset
-								dir="${frontend.themes.web.dir}/html/themes/control_panel/templates"
+								dir="${frontend.themes.web.dir}/control_panel/templates"
 								includes="*.${theme.type}"
 							/>
 						</copy>
@@ -1742,7 +1742,7 @@ Please find a solution that does not require portal-impl.jar.
 				<jvmarg value="-Ddeployer.base.dir=${sdk.dir}/dist" />
 				<jvmarg value="-Ddeployer.dest.dir=@{direct.deploy.dir}" />
 				<jvmarg value="-Ddeployer.app.server.type=${app.server.type}" />
-				<jvmarg value="-Ddeployer.aui.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/aui.tld" />
+				<jvmarg value="-Ddeployer.aui.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-aui.tld" />
 				<jvmarg value="-Ddeployer.portlet.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-portlet.tld" />
 				<jvmarg value="-Ddeployer.portlet-ext.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-portlet-ext.tld" />
 				<jvmarg value="-Ddeployer.security.taglib.dtd=${app.server.portal.dir}/WEB-INF/tld/liferay-security.tld" />
@@ -1951,7 +1951,7 @@ Please find a solution that does not require portal-impl.jar.
 								<then>
 									<if>
 										<resourcecount count="0" when="gt">
-											<fileset dir="@{module.dir}/docroot" erroronmissingdir="false" includes="**/*.css" />
+											<fileset dir="@{module.dir}/docroot" erroronmissingdir="false" includes="**/*.css, **/*.scss" />
 										</resourcecount>
 										<then>
 											<build-css
@@ -1963,7 +1963,7 @@ Please find a solution that does not require portal-impl.jar.
 
 									<if>
 										<resourcecount count="0" when="gt">
-											<fileset dir="@{module.dir}/src/META-INF/resources" erroronmissingdir="false" includes="**/*.css" />
+											<fileset dir="@{module.dir}/src/META-INF/resources" erroronmissingdir="false" includes="**/*.css, **/*.scss" />
 										</resourcecount>
 										<then>
 											<build-css
@@ -1983,6 +1983,25 @@ Please find a solution that does not require portal-impl.jar.
 											/>
 										</then>
 									</if>
+
+									<if>
+										<available file="@{module.dir}/bower.json" />
+										<then>
+											<copy
+												file="@{module.dir}/bower.json"
+												overwrite="true"
+												tofile="@{module.dir}/.js-cache/bower.json"
+											/>
+
+											<config-js-modules
+												module.dir="@{module.dir}"
+											/>
+										</then>
+									</if>
+
+									<copy todir="@{module.dir}/classes">
+										<fileset dir="@{module.dir}/.js-cache" erroronmissingdir="false" />
+									</copy>
 
 									<build-wsdl
 										module.dir="@{module.dir}"
@@ -2668,8 +2687,6 @@ Please find a solution that does not require portal-impl.jar.
 					</not>
 				</and>
 				<then>
-					<delete file="${lp.portal.project.dir}/.testable.portal.started" failonerror="false" />
-
 					<ant antfile="${lp.portal.project.dir}/build-test.xml" target="setup-testable-tomcat" inheritAll="false">
 						<property name="project.dir" value="${lp.portal.project.dir}" />
 					</ant>
@@ -3757,5 +3774,61 @@ for (String path : paths) {
 			module.dirs="${plugins.includes.path}"
 			target.name="war"
 		/>
+	</target>
+
+	<target name="watch">
+		<property name="watch.flag.file" location="${sdk.dir}/tmp/watch.flag" />
+
+		<touch file="${watch.flag.file}" mkdirs="true" />
+
+		<antelope:repeat count="-1" interval="2">
+			<outofdate outputsourcespath="watch.sources.path">
+				<sourcefiles>
+					<fileset dir="${basedir}">
+						<include name="**/*.css" />
+						<include name="**/*.ftl" />
+						<include name="**/*.java" />
+						<include name="**/*.js" />
+						<include name="**/*.jsp" />
+						<include name="**/*.jspf" />
+						<include name="**/*.scss" />
+						<include name="**/*.vm" />
+						<exclude name="**/test/unit/**" />
+						<exclude name="**/test/integration/**" />
+						<exclude name="**/classes/**" />
+						<exclude name="**/.sass-cache/**" />
+					</fileset>
+				</sourcefiles>
+				<targetfiles>
+					<pathelement location="${watch.flag.file}" />
+				</targetfiles>
+				<sequential>
+					<property name="watch.sources.path" refid="watch.sources.path" />
+
+					<echo>Detected a modification in ${watch.sources.path}.</echo>
+
+					<propertyregex
+						global="false"
+						input="${watch.sources.path}"
+						override="true"
+						property="watch.deploy.path"
+						regexp="src.*$|docroot.*$"
+						replace=""
+					/>
+
+					<echo>Deploying ${watch.deploy.path}.</echo>
+
+					<deploy
+						module.dir="${watch.deploy.path}"
+					/>
+
+					<var name="watch.sources.path" unset="true" />
+
+					<touch file="${watch.flag.file}" />
+
+					<echo>Finished deployment. Watching for additional modifications.</echo>
+				</sequential>
+			</outofdate>
+		</antelope:repeat>
 	</target>
 </project>
